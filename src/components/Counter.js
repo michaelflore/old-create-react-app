@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import SimpleStorage from 'react-simple-storage';
 
 class Counter extends Component {
     constructor(props) {
@@ -46,7 +45,6 @@ class Counter extends Component {
     render() {
         return (
             <div>
-                <SimpleStorage parent={this}/>
                 <h2>{this.state.username}</h2>
                 <input onChange={this.handleUsername} placeholder={this.state.username}/>
 
