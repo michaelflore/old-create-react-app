@@ -6,9 +6,7 @@ class Counter extends Component {
         
         this.state = {
             count: 0,
-            username: "mflores98",
-            first: "first",
-            last: "last"
+            username: ""
         }
     }
 
@@ -46,39 +44,27 @@ class Counter extends Component {
         return (
             <div>
                 <h2>{this.state.username}</h2>
-                <input onChange={this.handleUsername} placeholder={this.state.username}/>
+                <input onChange={this.handleUsername} placeholder={"Type here..."}/>
 
-                <Name name={this.state.count}/>
-                <Button handleClick={this.handleClick} text="reset"/>
+                <Count count={this.state.count}/>
+
+                <Button handleClick={this.handleClick} text="Reset"/>
                 <Button handleClick={this.addByOne} text="Add" />
                 <Button handleClick={this.subByOne} text="Sub" />
-
-                <div>{this.state.first} {this.state.last}</div>
-                <UserForm id="firstName" label="First Name" onChange={this.handleFirst}/>
-                <UserForm id="lastName" label="Last Name" onChange={this.handleLast}/>
             </div>
         );
     }
 }
 
-const Name = (props) => {
+const Count = (props) => {
     return (
-        <h1>{props.name}</h1>
+        <h1>{props.count}</h1>
     );
 }
 
 const Button = (props) => {
     return (
         <button onClick={props.handleClick}>{props.text}</button>
-    );
-}
-
-const UserForm = (props) => {
-    return (
-        <div>
-            <label htmlFor={props.id}>{props.label}</label>
-            <input type="text" id={props.id} onChange={props.onChange}/>
-        </div>
     );
 }
 

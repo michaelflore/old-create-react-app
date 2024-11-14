@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, createRef} from 'react';
 
 class BarChart extends Component {
     state = {
@@ -6,50 +6,63 @@ class BarChart extends Component {
         points: 0
     }
 
-    timerId;
+    timerId = createRef();
 
     startTimer = () => {
-        this.timerId = setInterval(() => {
-            this.addPoints()
+        this.timerId.current = setInterval(() => {
+            this.addPoints();
         }, 1000);
     }
 
     stopTimer = () => {
-        clearInterval(this.timerId);
+        clearInterval(this.timerId.current);
     }
 
     addPoints = () => {
-        this.setState({ points: this.state.points + 1});
+        this.setState(state => (
+            {
+                points: state.points + 1
+            }
+        ));
     }
 
     reset = () => {
         this.setState({ points: 0 });
-        this.startTimer();
     }
 
-    componentDidMount() {
-        this.startTimer();
-    }
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     console.log(`Previous State: ${prevState.points}`)
+    //     console.log(`Current State: ${this.state.points}`)
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log(`Previous State: ${prevState.points}`)
-        console.log(`Current State: ${this.state.points}`)
-
-        if(prevState.points !== this.state.points) {
-            console.log("State Changed")
-        }
-    }
+    //     if(prevState.points !== this.state.points) {
+    //         console.log("State Changed")
+    //     }
+    // }
 
     render() {
         return (
             <div>
                 {
                     (this.state.points < this.state.goal) ? 
-                    (<Chart points={this.state.points} stopTimer={this.stopTimer} />) : 
-                    (<div>GOAL!</div>)
+                    (
+                        <Chart
+                            points={this.state.points}
+                            startTimer={this.startTimer}
+                            stopTimer={this.stopTimer}
+                        />
+                    ) : (
+                        <div>GOAL!</div>
+                    )
                 }
                 <h1>Points: {this.state.points}/{this.state.goal}</h1>
-                <Controls goal={this.state.goal} points={this.state.points} addPoints={this.addPoints} reset={this.reset} />
+
+                <Controls
+                    goal={this.state.goal}
+                    points={this.state.points}
+                    addPoints={this.addPoints}
+                    reset={this.reset}
+                    startTimer={this.startTimer}
+                />
             </div>
         );
     }
@@ -65,16 +78,19 @@ class Chart extends Component {
     //     }
     // }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log(`Previous Props: ${prevProps.points}`);
-        console.log(`Current Props: ${this.props.points}`);
-        if (prevProps.points !== this.props.points) {
-            console.log("Props Changed")
-        }
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     console.log(`Previous Props: ${prevProps.points}`);
+    //     console.log(`Current Props: ${this.props.points}`);
+    //     if (prevProps.points !== this.props.points) {
+    //         console.log("Props Changed")
+    //     }
+    // }
+
+    componentDidMount() {
+        // this.props.startTimer();
     }
 
     componentWillUnmount() {
-        alert("About to Unmount!")
         this.props.stopTimer();
     }
 
@@ -102,16 +118,24 @@ class Chart extends Component {
 }
 
 const Controls = (props) => {
-    if(props.points < props.goal) {
-        return <button onClick={props.addPoints}>+Add</button>
-    } else {
-        return (
-            <Fragment>
-                <button disabled>Done</button>
-                <button onClick={props.reset}>Reset</button>
-            </Fragment>
-        )
-    }
+    
+    return (
+        <Fragment>
+            {
+                (props.points < props.goal) ? (
+                    <Fragment>
+                        <button onClick={props.addPoints}>Add</button>
+                        <button onClick={props.startTimer}>Start</button>
+                    </Fragment>
+                ) : (
+                        <Fragment>
+                            <button disabled>Done</button>
+                            <button onClick={props.reset}>Reset</button>
+                        </Fragment>
+                    )
+            }
+        </Fragment>
+    )
 }
 
 export default BarChart;
